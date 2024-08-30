@@ -9,13 +9,23 @@ import 'package:supabase_chat/models/chat_message.dart';
 import 'package:supabase_chat/providers/auth_provider.dart';
 import 'package:supabase_chat/providers/chat_provider.dart';
 import 'package:supabase_chat/utils.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 final chatMessagesProvider = StreamProvider<List<ChatMessage>>(
   (ref) async* {
-    // TODO: implement the realtime listener for the messages
+    var stream = Supabase.instance.client
+        .from(kMessagesTable)
+        .stream(primaryKey: [ChatMessage.idAndCreatedAtKeys().$1])
+        .order(ChatMessage.idAndCreatedAtKeys().$2)
+        .limit(20)
+        .map(
+          (data) {
+            return data.map<ChatMessage>((it) => ChatMessage.fromMap(it)).toList();
+          },
+        );
 
-    yield* Stream.fromIterable([]);
+    yield* stream;
   },
 );
 

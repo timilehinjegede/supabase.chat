@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_chat/models/chat_message.dart';
 import 'package:supabase_chat/services/superbase_service.dart';
+import 'package:supabase_chat/utils.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final chatProvider = ChangeNotifierProvider<ChatProvider>((ref) {
   final superbaseService = ref.watch(superbaseServiceProvider);
@@ -22,6 +24,6 @@ class ChatProvider extends ChangeNotifier {
       message = message.copyWith(imagePath: imageUrl);
     }
 
-    // TODO: add the message to the table just created
+    await Supabase.instance.client.from(kMessagesTable).insert(message.toMap());
   }
 }

@@ -12,7 +12,7 @@ final authProvider = StateNotifierProvider<AuthProvider, User?>(
 
 class AuthProvider extends StateNotifier<User?> {
   AuthProvider(this.superbaseService) : super(null) {
-    // TODO: check user session after successful sign in
+    checkIfUserExists();
   }
 
   final SuperbaseService superbaseService;
@@ -20,10 +20,13 @@ class AuthProvider extends StateNotifier<User?> {
   User? _currentUser;
   User? get currentUser => _currentUser;
 
+  void checkIfUserExists() async {}
+
   Future<void> signInAnonymously(String displayName) async {
     final isSignedIn = await superbaseService.signInAnonymously(displayName);
 
-    // TODO: check if loggined in
-    if (isSignedIn) {}
+    if (isSignedIn) {
+      state = superbaseService.getUser();
+    }
   }
 }
